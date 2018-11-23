@@ -28,7 +28,7 @@
 
         .layout{
             margin: 0 auto;
-            /*border: 1px solid red;*/
+            border: 1px solid red;
         }
 
         @media (min-width: 700px) {
@@ -83,7 +83,7 @@
             opacity: 1;
         }
         /*.layout .iconfont:hover{*/
-            /*opacity: 1;*/
+        /*opacity: 1;*/
         /*}*/
         footer .layout .icon-leftarrow{
             left: -4vh;
@@ -185,7 +185,7 @@
             color: #fff;
         }
         main .detail{
-            margin-left: 52vh;
+            margin-left: 56vh;
             color: #fff;
             /*border: 1px solid yellow;*/
         }
@@ -202,13 +202,15 @@
         main .icons{
             display: flex;
             margin-top: 15vh;
-            text-align: center;
+            /* font-size: 4vh; */
+            /* text-align: center; */
         }
         main .icons>li{
             flex: 1;
+            /* border: 1px solid red; */
         }
         main .icons .iconfont{
-            font-size: 2vh;
+            font-size: 3vh;
         }
 
         main .area-bar{
@@ -220,7 +222,7 @@
 
         main .area-bar .bar{
             position: relative;
-            flex: 1;
+            flex: 3;
             height: .8vh;
             border-radius: .2vh;
             background: rgba(255, 255, 255, .4);
@@ -237,6 +239,8 @@
             width: 3vh;
             /*font-size: 2vh;*/
             margin-left: 1vh;
+            flex: .5;
+            /*border: 1px solid red;*/
         }
 
         main .detail .singer{
@@ -329,12 +333,12 @@
 
     </div>
     <script>
-        // var $ul = $('.layout>ul');
-        // var $widthPerli = $ul.children().eq(0).outerWidth(true);
-        // var $ulWidth = $widthPerli * $ul.children().length;
-        // $ul.css({
-        //     width: $ulWidth
-        // });
-    </script>
+    // var $ul = $('.layout>ul');
+    // var $widthPerli = $ul.children().eq(0).outerWidth(true);
+    // var $ulWidth = $widthPerli * $ul.children().length;
+    // $ul.css({
+    //     width: $ulWidth
+    // });
+</script>
 </body>
 </html>
