@@ -28,7 +28,7 @@
 
         .layout{
             margin: 0 auto;
-            border: 1px solid red;
+            /*border: 1px solid red;*/
         }
 
         @media (min-width: 700px) {
@@ -185,10 +185,71 @@
             color: #fff;
         }
         main .detail{
-            margin-left: 56vh;
+            margin-left: 52vh;
             color: #fff;
-            border: 1px solid yellow;
+            /*border: 1px solid yellow;*/
         }
+
+        main .tag{
+            font-size: 2vh;
+            padding: .4em .8em;
+            background: #2e6eec;
+        }
+        main .detail h1{
+            font-size: 4.5vh;
+            margin-top: 2vh;
+        }
+        main .icons{
+            display: flex;
+            margin-top: 15vh;
+            text-align: center;
+        }
+        main .icons>li{
+            flex: 1;
+        }
+        main .icons .iconfont{
+            font-size: 2vh;
+        }
+
+        main .area-bar{
+            margin-top: 7vh;
+            display: flex;
+            align-items: center;
+            /*border: 1px solid red;*/
+        }
+
+        main .area-bar .bar{
+            position: relative;
+            flex: 1;
+            height: .8vh;
+            border-radius: .2vh;
+            background: rgba(255, 255, 255, .4);
+        }
+        main .area-bar .progress-bar{
+            position: absolute;
+            height: .8vh;
+            width: 50%;
+            transition: width .8s;
+            background-color: #fff;
+            border-radius: .2vh;
+        }
+        main .area-bar .current-time{
+            width: 3vh;
+            /*font-size: 2vh;*/
+            margin-left: 1vh;
+        }
+
+        main .detail .singer{
+            font-size: 2vh;
+            margin-top: 2vh;
+            color: rgba(255, 255, 255, .6);
+        }
+        main .detail .lyric{
+            font-size: 1.8vh;
+            margin-top: 1vh;
+            color: #fff;
+        }
+
     </style>
 </head>
 <body>
@@ -206,9 +267,9 @@
                 <span class="tag">流行音乐</span>
                 <h1>It's a new day</h1>
                 <ul class="icons">
-                    <li><span class="iconfont icon-headphone"></span></li>
-                    <li><span class="iconfont icon-heart"></span></li>
-                    <li><span class="iconfont icon-like"></span></li>
+                    <li><span class="iconfont icon-headphone">&nbsp;3333</span></li>
+                    <li><span class="iconfont icon-heart">&nbsp;128</span></li>
+                    <li><span class="iconfont icon-like">&nbsp;200</span></li>
                 </ul>
                 <div class="area-bar">
                     <div class="bar">
