@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-    <!--<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>-->
+    <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
 
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -28,7 +28,7 @@
 
         .layout{
             margin: 0 auto;
-            border: 1px solid red;
+            /*border: 1px solid red;*/
         }
 
         @media (min-width: 700px) {
@@ -95,7 +95,9 @@
         }
         footer .box>ul{
             height: 100%;
-            margin-left: -2vh;
+            position: absolute;
+            left: 0;
+            /*margin-left: -2vh;*/
         }
 
         footer .layout li{
@@ -254,6 +256,11 @@
             color: #fff;
         }
 
+
+        #page-cover{
+            display: none;
+        }
+
     </style>
 </head>
 <body>
@@ -295,30 +302,30 @@
                 <span class="iconfont icon-rightarrow"></span>
                 <div class="box">
                     <ul class="clearfix">
-                        <li>
-                            <div style="background-image:url(http://imge.kugou.com/soft/collection/150/20181115/20181115163720715365.jpg)"></div>
-                            <h3>未遇上你的日子里</h3>
-                        </li>
-                        <li>
-                            <div style="background-image:url(http://imge.kugou.com/soft/collection/150/20181107/20181107103810940747.jpg)"></div>
-                            <h3>新的一周元气满满的工作吧</h3>
-                        </li>
-                        <li>
-                            <div style="background-image:url(http://imge.kugou.com/soft/collection/150/20181115/20181115214921466745.jpg)"></div>
-                            <h3>青春就在这些歌名里</h3>
-                        </li>
-                        <li>
-                            <div style="background-image:url(http://imge.kugou.com/soft/collection/150/20181108/20181108223953434303.jpg)"></div>
-                            <h3>中文dj 现在开始一起蹦迪</h3>
-                        </li>
-                        <li>
-                            <div style="background-image:url(http://imge.kugou.com/soft/collection/150/20181111/20181111223824503997.jpg)"></div>
-                            <h3>经典粤语励志人生</h3>
-                        </li>
-                        <li>
-                            <div style="background-image:url(http://imge.kugou.com/soft/collection/150/20181115/20181115072004230550.jpg)"></div>
-                            <h3>民谣藏着你孤独的心思</h3>
-                        </li>
+                        <!--<li>-->
+                            <!--<div style="background-image:url(http://imge.kugou.com/soft/collection/150/20181115/20181115163720715365.jpg)"></div>-->
+                            <!--<h3>未遇上你的日子里</h3>-->
+                        <!--</li>-->
+                        <!--<li>-->
+                            <!--<div style="background-image:url(http://imge.kugou.com/soft/collection/150/20181107/20181107103810940747.jpg)"></div>-->
+                            <!--<h3>新一周元气满满的工作</h3>-->
+                        <!--</li>-->
+                        <!--<li>-->
+                            <!--<div style="background-image:url(http://imge.kugou.com/soft/collection/150/20181115/20181115214921466745.jpg)"></div>-->
+                            <!--<h3>青春就在这些歌名里</h3>-->
+                        <!--</li>-->
+                        <!--<li>-->
+                            <!--<div style="background-image:url(http://imge.kugou.com/soft/collection/150/20181108/20181108223953434303.jpg)"></div>-->
+                            <!--<h3>中文dj 现在开始一起蹦迪</h3>-->
+                        <!--</li>-->
+                        <!--<li>-->
+                            <!--<div style="background-image:url(http://imge.kugou.com/soft/collection/150/20181111/20181111223824503997.jpg)"></div>-->
+                            <!--<h3>经典粤语励志人生</h3>-->
+                        <!--</li>-->
+                        <!--<li>-->
+                            <!--<div style="background-image:url(http://imge.kugou.com/soft/collection/150/20181115/20181115072004230550.jpg)"></div>-->
+                            <!--<h3>民谣藏着你孤独的心思</h3>-->
+                        <!--</li>-->
                     </ul>
                 </div>
 
@@ -333,12 +340,86 @@
 
     </div>
     <script>
-    // var $ul = $('.layout>ul');
-    // var $widthPerli = $ul.children().eq(0).outerWidth(true);
-    // var $ulWidth = $widthPerli * $ul.children().length;
-    // $ul.css({
-    //     width: $ulWidth
-    // });
-</script>
+            var footer = {
+                init: function () {
+                    this.$footer = $('footer');
+                    this.$box = this.$footer.find('.box');
+                    this.$ul = this.$box.find('ul');
+                    this.leftBtn = $('.icon-leftarrow');
+                    this.rightBtn = $('.icon-rightarrow');
+                    this.isAtStart = true;
+                    this.isAtEnd = false;
+                    this.bind();
+                    this.getHotList();
+                },
+                bind: function () {
+                    var _this = this;
+                    this.rightBtn.on('click',function () {
+                        console.log('rightBtn  clicked..')
+                        let itemWidth = _this.$ul.children().eq(0).outerWidth(true);
+                        let count = Math.floor(parseFloat(_this.$box.width()) / parseFloat(itemWidth));
+                        if(!_this.isAtEnd){
+                            _this.$ul.animate({
+                                left: '-=' + count * itemWidth
+                            },function () {
+                                _this.isAtStart = false;
+                                console.log('right animation..',_this.$box.width(),_this.$ul.css('left'),_this.$ul.width())
+                                // if(_this.$box.width() - _this.$ul.css('width'))
+                                if(_this.$box.width()-parseInt(_this.$ul.css('left')) >= _this.$ul.width()){
+                                    console.log('at end');
+                                    _this.isAtEnd = true;
+                                }
+                            });
+                        }
+                    })
+
+                    this.leftBtn.on('click',function () {
+                        console.log('leftBtn clicked..')
+                        let itemWidth = _this.$ul.children().eq(0).outerWidth(true);
+                        let count = Math.floor(parseFloat(_this.$box.width()) / parseFloat(itemWidth));
+                        if(!_this.isAtStart){
+                            _this.$ul.animate({
+                                left: '+=' + count * itemWidth
+                            },function () {
+                                _this.isAtEnd = false;
+                                if(parseInt(_this.$ul.css('left')) >= 0){
+                                    console.log('at start')
+                                    _this.isAtStart = true;
+                                }
+                            })
+                        }
+                    })
+
+                },
+                renderFooter: function (list) {
+                    var _this = this;
+                    var str = '';
+                    list.forEach(function (value) {
+                        let li = '<li>' +
+                                        '<div style="background-image: url(' + value.cover + ')' + '"></div>' +
+                                    '<h3>' + value.title + '</h3>' +
+                                    '</li>';
+                        str += li;
+                    });
+                    // str += '<script>alert(11)<\/script>' //WARN: XSS 攻击
+                    _this.$ul.html(str);
+                    _this.$ul.css({
+                        width: _this.$ul.children().length * _this.$ul.children().eq(0).outerWidth(true)
+                    });
+                },
+                getHotList: function () {
+                    var _this = this;
+                    $.getJSON('https://www.easy-mock.com/mock/5bfb6307b88b2a71b0d2d0c1/music-player-2/hotlist')
+                        .done(function (data) {
+                            console.log('getHostlist', data);
+                            _this.renderFooter(data.hotlist);
+                        })
+                        .fail(function (err) {
+                            console.log('faild');
+                        })
+                }
+            }
+            footer.init();
+    </script>
 </body>
 </html>
