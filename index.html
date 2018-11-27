@@ -349,6 +349,7 @@
                     this.rightBtn = $('.icon-rightarrow');
                     this.isAtStart = true;
                     this.isAtEnd = false;
+                    this.isAnimate = false; // 防止高频触发点击事件
                     this.bind();
                     this.getHotList();
                 },
@@ -356,12 +357,15 @@
                     var _this = this;
                     this.rightBtn.on('click',function () {
                         console.log('rightBtn  clicked..')
+                        if(_this.isAnimate) return;
                         let itemWidth = _this.$ul.children().eq(0).outerWidth(true);
                         let count = Math.floor(parseFloat(_this.$box.width()) / parseFloat(itemWidth));
                         if(!_this.isAtEnd){
+                            _this.isAnimate = true;
                             _this.$ul.animate({
                                 left: '-=' + count * itemWidth
                             },function () {
+                                _this.isAnimate = false;
                                 _this.isAtStart = false;
                                 console.log('right animation..',_this.$box.width(),_this.$ul.css('left'),_this.$ul.width())
                                 // if(_this.$box.width() - _this.$ul.css('width'))
@@ -375,12 +379,15 @@
 
                     this.leftBtn.on('click',function () {
                         console.log('leftBtn clicked..')
+                        if(_this.isAnimate) return;
                         let itemWidth = _this.$ul.children().eq(0).outerWidth(true);
                         let count = Math.floor(parseFloat(_this.$box.width()) / parseFloat(itemWidth));
                         if(!_this.isAtStart){
+                            _this.isAnimate = true;
                             _this.$ul.animate({
                                 left: '+=' + count * itemWidth
                             },function () {
+                                _this.isAnimate = false;
                                 _this.isAtEnd = false;
                                 if(parseInt(_this.$ul.css('left')) >= 0){
                                     console.log('at start')
