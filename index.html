@@ -566,6 +566,11 @@
                         $('.bg').css({
                             'background-image': 'url(' + data.song.album + ')'
                         })
+                        this.$container.find('.progress-bar').css({
+                            'width': '0%',
+                            // 'background-color': 'red'
+                        })
+                        this.$container.find('.current-time').text('00:00');
                         _this.$container.find('.detail h1').text(data.song.name);
                         _this.$container.find('.detail .tag').text(data.song.tag);
                         _this.$container.find('.detail .singer').text(data.song.singer);
