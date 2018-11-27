@@ -4,6 +4,7 @@
     <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
 
     <meta charset="UTF-8">
+    <meta name="referrer" content="never">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <title>网页音乐播放器</title>
@@ -427,6 +428,20 @@
                 }
             }
             footer.init();
+            
+            var EventHub = {
+                on: function (type, handler) {
+                    $(document).on(type, handler);
+                },
+                fire: function (type, data) {
+                    $(document).trigger(type, data)
+                }
+            }
+
+            // EventHub.on('aaa', function (e, data) {
+            //     console.log('aaa..',data);
+            // })
+            // EventHub.fire('aaa',{name: 'jack'});
     </script>
 </body>
 </html>
