@@ -531,6 +531,15 @@
                     _this.playNext();
                 })
 
+                // 点击进度条快进播放
+                _this.$container.find('.bar').on('click',function (e) {
+                    var percent = e.offsetX / $(this).width() * 100;
+                    percent = percent.toFixed(2);
+                    _this.audio.currentTime = _this.audio.duration * percent / 100;
+                    clearInterval(_this.timer)
+                    _this.updateProgressBar();
+                })
+
                 _this.audio.onplay = function () {
                     $('.actions .icon-playing').removeClass('hide');
                     $('.actions .icon-pause').addClass('hide');
