@@ -141,8 +141,9 @@
             left: -10px;
             right: -10px;
             bottom: -10px;
-            background: url("http://imge.kugou.com/soft/collection/480/20181120/20181120185326259833.jpg") center center no-repeat;
+            background-image: url("http://imge.kugou.com/soft/collection/480/20181120/20181120185326259833.jpg");
             background-size: cover;
+            background-position: center;
             filter: blur(4px);
         }
         .bg:before{
@@ -200,7 +201,7 @@
         }
         main .detail h1{
             font-size: 4.5vh;
-            margin-top: 2vh;
+            margin-top: 5vh;
         }
         main .icons{
             display: flex;
@@ -233,7 +234,7 @@
         main .area-bar .progress-bar{
             position: absolute;
             height: .8vh;
-            width: 50%;
+            width: 1%;
             transition: width .8s;
             background-color: #fff;
             border-radius: .2vh;
@@ -257,6 +258,14 @@
             color: #fff;
         }
 
+        main .actions .icon-pause.hide{
+            display: none;
+        }
+
+        main .actions .icon-playing.hide{
+            display: none;
+        }
+
 
         #page-cover{
             display: none;
@@ -272,6 +281,7 @@
                 <div class="actions">
                     <span class="iconfont icon-heart"></span>
                     <span class="iconfont icon-pause"></span>
+                    <span class="iconfont icon-playing hide"></span>
                     <span class="iconfont icon-next"></span>
                 </div>
             </div>
@@ -280,8 +290,8 @@
                 <h1>It's a new day</h1>
                 <ul class="icons">
                     <li><span class="iconfont icon-headphone">&nbsp;3333</span></li>
-                    <li><span class="iconfont icon-heart">&nbsp;128</span></li>
-                    <li><span class="iconfont icon-like">&nbsp;200</span></li>
+                    <li><span class="iconfont icon-heart">&nbsp;1288</span></li>
+                    <li><span class="iconfont icon-like">&nbsp;12200</span></li>
                 </ul>
                 <div class="area-bar">
                     <div class="bar">
@@ -306,26 +316,6 @@
                         <!--<li>-->
                             <!--<div style="background-image:url(http://imge.kugou.com/soft/collection/150/20181115/20181115163720715365.jpg)"></div>-->
                             <!--<h3>未遇上你的日子里</h3>-->
-                        <!--</li>-->
-                        <!--<li>-->
-                            <!--<div style="background-image:url(http://imge.kugou.com/soft/collection/150/20181107/20181107103810940747.jpg)"></div>-->
-                            <!--<h3>新一周元气满满的工作</h3>-->
-                        <!--</li>-->
-                        <!--<li>-->
-                            <!--<div style="background-image:url(http://imge.kugou.com/soft/collection/150/20181115/20181115214921466745.jpg)"></div>-->
-                            <!--<h3>青春就在这些歌名里</h3>-->
-                        <!--</li>-->
-                        <!--<li>-->
-                            <!--<div style="background-image:url(http://imge.kugou.com/soft/collection/150/20181108/20181108223953434303.jpg)"></div>-->
-                            <!--<h3>中文dj 现在开始一起蹦迪</h3>-->
-                        <!--</li>-->
-                        <!--<li>-->
-                            <!--<div style="background-image:url(http://imge.kugou.com/soft/collection/150/20181111/20181111223824503997.jpg)"></div>-->
-                            <!--<h3>经典粤语励志人生</h3>-->
-                        <!--</li>-->
-                        <!--<li>-->
-                            <!--<div style="background-image:url(http://imge.kugou.com/soft/collection/150/20181115/20181115072004230550.jpg)"></div>-->
-                            <!--<h3>民谣藏着你孤独的心思</h3>-->
                         <!--</li>-->
                     </ul>
                 </div>
@@ -477,12 +467,116 @@
 
         var player = {
             init:function () {
+                this.audio = new Audio();
+                this.audio.autoplay = true;
+                this.$container = $('#page-music');
+                this.songList = [];
+                this.index = 0;
+                this.timer = null;
                 this.bind()
             },
             bind:function () {
+                var _this = this;
+                // 热门歌单点击事件，自动播放第一首歌
                 EventHub.on('select_hotlist',function (e,data) {
                     console.log('received select_hotlist event...',data);
+                    _this.songList = data.split(',');
+                    _this.index = 0;
+                    _this.getSong(_this.songList[0]);
+
                 })
+
+                // 暂停按钮
+                _this.$container.find('.actions .icon-pause').on('click',function () {
+                    $(this).addClass('hide');
+                    $('.actions .icon-playing').removeClass('hide');
+                    _this.audio.play();
+
+                })
+                // 播放按钮
+                _this.$container.find('.actions .icon-playing').on('click',function () {
+                    $(this).addClass('hide');
+                    $('.actions .icon-pause').removeClass('hide');
+                    _this.audio.pause();
+
+                })
+                // 下一曲
+                _this.$container.find('.actions .icon-next').on('click',function () {
+                    _this.playNext();
+                })
+
+                _this.audio.onplay = function () {
+                    $('.actions .icon-playing').removeClass('hide');
+                    $('.actions .icon-pause').addClass('hide');
+                }
+
+                _this.audio.onended = function () {
+                    clearInterval(_this.timer)
+                    _this.playNext();
+                }
+
+                _this.audio.onpause = function () {
+                    clearInterval(_this.timer);
+                }
+
+                _this.audio.onplaying = function () {
+                    _this.timer = setInterval(function () {
+                        //console.log(_this.audio.src);
+                        //console.log('on playing..')
+                        // 更新进度条
+                        _this.updateProgressBar()
+
+                    },1000)
+
+                }
+
+            },
+            updateProgressBar:function () {
+                var _this = this;
+                // 进度条和时间
+                let minutes = parseInt(_this.audio.currentTime / 60) + '';
+                let seconds = parseInt(_this.audio.currentTime % 60) + '';
+                minutes = minutes.length === 2 ? minutes : '0' + minutes;
+                seconds = seconds.length === 2 ? seconds : '0' + seconds;
+
+                let width = parseInt(this.audio.currentTime / this.audio.duration * 100);
+                console.log('width...',width);
+                this.$container.find('.progress-bar').css({
+                    'width': width + '%',
+                    // 'background-color': 'red'
+                })
+
+                this.$container.find('.current-time').text(minutes + ':' + seconds);
+
+            },
+            playNext: function () {
+                this.timer && clearInterval(this.timer)
+                var _this = this;
+                _this.index = (_this.index+1)%_this.songList.length
+                _this.getSong(_this.songList[_this.index]);
+            },
+            getSong:function(id){
+                var _this = this;
+                $.getJSON('https://www.easy-mock.com/mock/5bfb6307b88b2a71b0d2d0c1/music-player-2/song/' + id)
+                    .done(function (data) {
+                        _this.audio.src = data.song.src;
+                        _this.$container.find('.aside figure').css({
+                            'background-image': 'url(' + data.song.album + ')'
+                        })
+                        $('.bg').css({
+                            'background-image': 'url(' + data.song.album + ')'
+                        })
+                        _this.$container.find('.detail h1').text(data.song.name);
+                        _this.$container.find('.detail .tag').text(data.song.tag);
+                        _this.$container.find('.detail .singer').text(data.song.singer);
+                        _this.$container.find('.detail .icon-headphone').text(' ' + data.song.listening);
+                        _this.$container.find('.detail .icon-heart').text(' ' + data.song.heart);
+                        _this.$container.find('.icon-like').text(' ' + data.song.like);
+
+
+
+
+                    })
             }
         }
         player.init();
