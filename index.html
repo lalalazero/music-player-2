@@ -501,6 +501,17 @@
 
                 })
 
+                // 红心收藏按钮
+                _this.$container.find('.actions .icon-heart').on('click',function () {
+                    let songId = _this.songList[_this.index];
+                    console.log('..songId',songId);
+                    if(_this.checkIfLiked(songId)){
+                        _this.unlikeSong(songId);
+                    }else{
+                        _this.likeSong(songId);
+                    }
+                })
+
                 // 暂停按钮
                 _this.$container.find('.actions .icon-pause').on('click',function () {
                     $(this).addClass('hide');
@@ -515,7 +526,7 @@
                     _this.audio.pause();
 
                 })
-                // 下一曲
+                // 下一曲按钮
                 _this.$container.find('.actions .icon-next').on('click',function () {
                     _this.playNext();
                 })
@@ -602,6 +613,10 @@
 
                         _this.loadLyric(data.song.lyrics)
 
+                        // 检查是否点过红心
+                        _this.checkIfLiked(id) && _this.likeSong(id);
+                        _this.checkIfLiked(id) || _this.unlikeSong(id);
+
 
                     })
             },
@@ -623,6 +638,25 @@
                 })
 
                 //console.log(this.lyricObj)
+            },
+            checkIfLiked:function (songId) { // 检查是否点过红心
+                if(localStorage.getItem('song' + songId)){
+                    return true;
+                }else{
+                    return false;
+                }
+            },
+            likeSong:function(songId){
+                this.$container.find('.actions .icon-heart').css({
+                    'color':'red'
+                })
+                localStorage.getItem('song'+songId) || localStorage.setItem('song'+songId, songId);
+            },
+            unlikeSong:function (songId) {
+                this.$container.find('.actions .icon-heart').css({
+                    'color':''
+                })
+                localStorage.getItem('song'+songId) && localStorage.removeItem('song'+songId)
             }
         }
 
