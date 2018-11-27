@@ -9,6 +9,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <title>网页音乐播放器</title>
     <link rel="stylesheet" href="//at.alicdn.com/t/font_931352_k8xiq5nyll.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.2/animate.min.css">
     <style>
         *{
             margin: 0;
@@ -110,6 +111,10 @@
             cursor: pointer;
         }
         footer .layout li:hover{
+            box-shadow: 0 0 0.5vh 0.5vh rgba(255,255,255,0.8);
+        }
+
+        footer .layout li.playing{
             box-shadow: 0 0 0.5vh 0.5vh rgba(255,255,255,0.8);
         }
         footer .layout .box{
@@ -266,6 +271,10 @@
             display: none;
         }
 
+        .boomLyric{
+            opacity: 0;
+        }
+
 
         #page-cover{
             display: none;
@@ -287,7 +296,7 @@
             </div>
             <div class="detail">
                 <span class="tag">流行音乐</span>
-                <h1>It's a new day</h1>
+                <h1></h1>
                 <ul class="icons">
                     <li><span class="iconfont icon-headphone">&nbsp;3333</span></li>
                     <li><span class="iconfont icon-heart">&nbsp;1288</span></li>
@@ -301,9 +310,9 @@
                     </div>
                     <div class="current-time">00:00</div>
                 </div>
-                <div class="singer">Ed Sheeran</div>
+                <div class="singer"></div>
                 <div class="lyric">
-                    <p>lalalalalala</p>
+                    <p></p>
                 </div>
             </div>
         </main>
@@ -357,7 +366,7 @@
                 this.isAnimate = false; // 防止高频触发点击事件
                 this.listFlag = false;
                 this.bind();
-                this.getHotList();
+                this.getHotList(this.autoPlayList);
             },
             bind: function () {
                 var _this = this;
@@ -406,6 +415,7 @@
                 // 热门歌单点击事件
                 _this.$ul.on('click','li',function (e) {
                     console.log('select_hotlist triggered..')
+                    $(this).addClass('playing').siblings().removeClass('playing');
                     EventHub.fire('select_hotlist',$(this).attr('songs'))
                 })
 
@@ -420,6 +430,9 @@
 
 
             },
+            autoPlayList: function () { // 自动播放第一个歌单
+                this.$ul.children().eq(0).trigger('click');
+            },
             throttle:function (fn, delay) {
                 let timer = null;
                 return ()=>{
@@ -427,7 +440,7 @@
                     timer = setTimeout(()=>fn.bind(this)(arguments),delay)
                 }
             },
-            renderFooter: function (list) {
+            renderFooter: function (list,callback) {
                 var _this = this;
                 var str = '';
                 list.forEach(function (value) {
@@ -444,6 +457,7 @@
                 _this.$ul.css({
                     width: _this.$ul.children().length * _this.$ul.children().eq(0).outerWidth(true)
                 });
+                callback && callback.call(this);
             },
             generateListItem:function () {
                 // 只有4首歌的数据
@@ -451,12 +465,12 @@
                 return this.listFlag === true ? '1,2' : '3,4';
 
             },
-            getHotList: function () {
+            getHotList: function (callback) {
                 var _this = this;
                 $.getJSON('https://www.easy-mock.com/mock/5bfb6307b88b2a71b0d2d0c1/music-player-2/hotlist')
                     .done(function (data) {
                         console.log('getHostlist', data);
-                        _this.renderFooter(data.hotlist);
+                        _this.renderFooter(data.hotlist,callback);
                     })
                     .fail(function (err) {
                         console.log('faild');
@@ -473,6 +487,7 @@
                 this.songList = [];
                 this.index = 0;
                 this.timer = null;
+                this.lyricObj = null;
                 this.bind()
             },
             bind:function () {
@@ -540,13 +555,20 @@
                 seconds = seconds.length === 2 ? seconds : '0' + seconds;
 
                 let width = parseInt(this.audio.currentTime / this.audio.duration * 100);
-                console.log('width...',width);
+                //console.log('width...',width);
                 this.$container.find('.progress-bar').css({
                     'width': width + '%',
                     // 'background-color': 'red'
                 })
 
                 this.$container.find('.current-time').text(minutes + ':' + seconds);
+                if(this.lyricObj[minutes + ':' + seconds]){
+                    // console.log(this.lyricObj[minutes + ':' + seconds])
+                    this.$container.find('.detail .lyric').text(this.lyricObj[minutes + ':' + seconds]);
+                    // 歌词的动画效果
+                    this.$container.find('.detail .lyric').boomLyric();
+                }
+
 
             },
             playNext: function () {
@@ -578,14 +600,54 @@
                         _this.$container.find('.detail .icon-heart').text(' ' + data.song.heart);
                         _this.$container.find('.icon-like').text(' ' + data.song.like);
 
-
+                        _this.loadLyric(data.song.lyrics)
 
 
                     })
+            },
+            loadLyric:function (lyric) {
+                //window.lyrics = lyric; //赋值给顶层对象window，方便调试
+                let arr = lyric.split('↵');
+                this.lyricObj = {};
+                var _this = this;
+                arr.forEach(function (line) {
+                    // [00:00.60][00:01.20] 像风一样自由
+                    // let times = line.match(/\d{2}:\d{2}\.\d{2}/g);
+                    let times = line.match(/\d{2}:\d{2}/g); // 只匹配到秒，不匹配到毫秒
+                    let content = line.replace(/\[.+?\]/,'');
+                    if(times && times.length > 0){
+                        times.map(function (time) {
+                            _this.lyricObj[time] = content;
+                        })
+                    }
+                })
+
+                //console.log(this.lyricObj)
             }
         }
+
+        // 引用 Animate.css, 添加jQuery的自定义效果
+
+        $.fn.boomLyric = function(type){
+            type = type || 'rollIn'
+            var chracters = this.text().split('');
+            var s = chracters.map(function(v){
+                return '<span class="boomLyric" style="display: inline-block">' + v + '</span>'
+            }).join('');
+            this.html(s);
+
+            var index = 0;
+            var spans = this.find('span');
+            var clock = setInterval(function(){
+                spans.eq(index).addClass('animated ' + type);
+                index++;
+                if(index >= spans.length){
+                    clearInterval(clock);
+                }
+            },300)
+        };
+
         player.init();
-            
 
     </script>
 </body>
