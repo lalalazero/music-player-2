@@ -421,13 +421,18 @@
                 })
 
                 // 窗口大小改变事件
-                // $(window).on('resize',this.throttle(()=>{
-                //     console.log('resize..')
-                //     this.$ul.empty();
-                //     console.log(this.$ul.css('width'), this.$ul.css('left'));
-                //     this.getHotList();
-                //     },300)
-                // )
+                $(window).on('resize',this.throttle(()=>{
+                    console.log('resize..')
+                    console.log(_this.$ul.width())
+                    _this.$ul.css({
+                        width: _this.$ul.children().length * _this.$ul.children().eq(0).outerWidth(true),
+                        left: 0
+                    });
+                    _this.isAtStart = true;
+                    _this.isAtEnd = false;
+                    console.log(_this.$ul.width())
+                    },300)
+                )
 
 
             },
